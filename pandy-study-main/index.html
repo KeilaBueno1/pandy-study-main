@@ -1,0 +1,678 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light" data-palette="blue">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#263B50">
+
+    <title>Pandy Study | Caderno Virtual</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        // Aplicar preferências salvas antes de mostrar a página
+        (() => {
+            const tema = localStorage.getItem("pandy-theme") || "light";
+            const paleta = localStorage.getItem("pandy-palette") || "blue";
+
+            document.documentElement.dataset.theme = tema;
+            document.documentElement.dataset.palette = paleta;
+        })();
+
+        // Verificar sessão do usuário
+        (async function verificarSessao() {
+            try {
+                const resposta = await fetch("/api/usuarios/me", {
+                    method: "GET",
+                    credentials: "include"
+                });
+
+                if (resposta.status === 401) {
+                    window.location.replace("login.html");
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error("Não foi possível verificar a sessão.");
+                }
+
+                const dados = await resposta.json();
+
+                if (!dados.usuario) {
+                    throw new Error("Dados do usuário não encontrados.");
+                }
+
+                window.usuarioLogado = dados.usuario;
+
+                // Atualizar informações do usuário
+                const saudacao = document.querySelector(".welcome h1");
+                const perfil = document.querySelector(".profile");
+
+                if (saudacao) {
+                    saudacao.textContent = `Olá, ${dados.usuario.nome}!`;
+                }
+
+                if (perfil) {
+                    perfil.textContent = dados.usuario.nome;
+                }
+
+                // Liberar a página após confirmar a sessão
+                document.documentElement.classList.add("autenticado");
+
+            } catch (erro) {
+                console.error("Erro ao verificar sessão:", erro);
+
+                alert(
+                    "Não foi possível verificar sua sessão. Confira se o servidor está funcionando."
+                );
+
+                window.location.replace("login.html");
+            }
+        })();
+    </script>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- MENU LATERAL -->
+    <aside class="sidebar" id="sidebar">
+
+        <a href="#inicio" class="logo">
+            PANDY<span>STUDY.</span>
+        </a>
+
+        <p class="menu-title">MENU PRINCIPAL</p>
+
+        <nav>
+            <a href="#inicio" class="nav-link active">
+                <span class="nav-icon">⌂</span>
+                <span class="nav-text">Início</span>
+            </a>
+
+            <a href="#materias" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span class="nav-text">Minhas matérias</span>
+            </a>
+
+            <a href="#anotacoes" class="nav-link">
+                <span class="nav-icon">▤</span>
+                <span class="nav-text">Caderno virtual</span>
+            </a>
+
+            <a href="#tarefas" class="nav-link">
+                <span class="nav-icon">✓</span>
+                <span class="nav-text">Tarefas e provas</span>
+            </a>
+
+            <a href="#horarios" class="nav-link">
+                <span class="nav-icon">◷</span>
+                <span class="nav-text">Horários de estudo</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            Seu espaço de estudos.
+        </div>
+
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- BARRA SUPERIOR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="icon-control"
+                    id="sidebar-toggle"
+                    aria-label="Recolher menu"
+                    title="Recolher menu"
+                >
+                    ☰
+                </button>
+
+                <span class="topbar-label">
+                    MEU ESPAÇO ACADÊMICO
+                </span>
+            </div>
+
+            <div class="topbar-actions">
+
+                <!-- SELETOR DE PALETAS -->
+                <label class="palette-wrapper">
+                    <span class="sr-only">Escolher paleta de cores</span>
+
+                    <select
+                        id="palette-select"
+                        class="palette-select"
+                        aria-label="Escolher paleta de cores"
+                    >
+                        <option value="blue">Azul</option>
+                        <option value="purple">Roxo</option>
+                        <option value="green">Verde</option>
+                        <option value="pink">Rosa</option>
+                    </select>
+                </label>
+
+                <!-- ALTERNAR TEMA -->
+                <button
+                    type="button"
+                    class="icon-control"
+                    id="theme-toggle"
+                    aria-label="Ativar tema escuro"
+                    title="Alternar tema"
+                >
+                    ☾
+                </button>
+
+                <span class="profile">ESTUDANTE</span>
+
+                <!-- SAIR DA CONTA -->
+                <button
+                    type="button"
+                    class="btn-logout"
+                    id="btn-logout"
+                >
+                    Sair da conta
+                </button>
+
+            </div>
+        </header>
+
+        <!-- INÍCIO -->
+        <section id="inicio" class="welcome">
+
+            <p class="eyebrow">
+                ORGANIZE • ESTUDE • CONQUISTE
+            </p>
+
+            <h1>Olá, estudante.</h1>
+
+            <p>
+                Seu semestre organizado em um só lugar.
+            </p>
+
+        </section>
+
+        <!-- RESUMO -->
+        <section class="summary">
+
+            <article class="summary-card">
+                <span>MINHAS MATÉRIAS</span>
+                <strong id="total-materias-resumo">00</strong>
+                <p>Disciplinas cadastradas</p>
+            </article>
+
+            <article class="summary-card">
+                <span>TAREFAS PENDENTES</span>
+                <strong id="total-pendentes-resumo">00</strong>
+                <p>Atividades para concluir</p>
+            </article>
+
+            <article class="summary-card">
+                <span>ATIVIDADES CONCLUÍDAS</span>
+                <strong id="total-concluidas-resumo">00</strong>
+                <p>Você está progredindo</p>
+            </article>
+
+        </section>
+
+        <!-- TAREFAS E PANDY -->
+        <section class="content-grid">
+
+            <!-- TAREFAS -->
+            <article class="panel" id="tarefas">
+
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">ORGANIZE SEUS PRAZOS</p>
+                        <h2>Tarefas e provas</h2>
+                    </div>
+
+                    <span class="black-tag">AGENDA</span>
+                </div>
+
+                <form id="form-tarefa" class="form-materia">
+
+                    <div class="form-group">
+                        <label for="titulo-tarefa">
+                            Nome da atividade *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="titulo-tarefa"
+                            placeholder="Ex.: Prova de Banco de Dados"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="materia-tarefa">Matéria *</label>
+
+                        <select id="materia-tarefa" required>
+                            <option value="">Selecione uma matéria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label for="tipo-tarefa">
+                                Tipo de atividade
+                            </label>
+
+                            <select id="tipo-tarefa">
+                                <option value="Atividade">Atividade</option>
+                                <option value="Prova">Prova</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Leitura">Leitura</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data-tarefa">
+                                Data do prazo *
+                            </label>
+
+                            <input
+                                type="date"
+                                id="data-tarefa"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prioridade-tarefa">
+                            Prioridade
+                        </label>
+
+                        <select id="prioridade-tarefa">
+                            <option value="Normal">Normal</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Urgente">Urgente</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        + Adicionar à agenda
+                    </button>
+
+                </form>
+
+                <div class="materias-heading">
+                    <h3>Minha agenda</h3>
+                    <span id="total-tarefas">0 tarefas</span>
+                </div>
+
+                <div class="filtros-tarefas">
+
+                    <button
+                        type="button"
+                        class="filtro-tarefa active"
+                        data-filtro="todas"
+                    >
+                        Todas
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filtro-tarefa"
+                        data-filtro="pendentes"
+                    >
+                        Pendentes
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filtro-tarefa"
+                        data-filtro="concluidas"
+                    >
+                        Concluídas
+                    </button>
+
+                </div>
+
+                <div id="lista-tarefas" class="lista-tarefas">
+                    <p class="muted">
+                        Suas atividades aparecerão aqui.
+                    </p>
+                </div>
+
+            </article>
+
+            <!-- PANDY -->
+            <article class="panel panda-panel">
+
+                <p class="eyebrow">SEU COMPANHEIRO</p>
+
+                <div class="panda-placeholder">🐼</div>
+
+                <h2>Oi, eu sou o Pandy!</h2>
+
+                <p>
+                    Vou te ajudar a organizar seus estudos,
+                    lembrar dos prazos e acompanhar suas conquistas.
+                </p>
+
+                <div class="panda-message">
+                    Pequenos passos também levam a grandes conquistas.
+                </div>
+
+            </article>
+
+        </section>
+
+        <!-- MATÉRIAS -->
+        <section class="panel lower-panel" id="materias">
+
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">SEU SEMESTRE</p>
+                    <h2>Minhas matérias</h2>
+                </div>
+
+                <span class="black-tag">DISCIPLINAS</span>
+            </div>
+
+            <form id="form-materia" class="form-materia">
+
+                <div class="form-group">
+                    <label for="nome-materia">
+                        Nome da matéria *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome-materia"
+                        placeholder="Ex.: Algoritmos"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="professor-materia">
+                            Professor (opcional)
+                        </label>
+
+                        <input
+                            type="text"
+                            id="professor-materia"
+                            placeholder="Nome do professor"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horario-materia">
+                            Horário (opcional)
+                        </label>
+
+                        <input
+                            type="text"
+                            id="horario-materia"
+                            placeholder="Ex.: Segunda, 19h"
+                        >
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    + Adicionar matéria
+                </button>
+
+            </form>
+
+            <div class="materias-heading">
+                <h3>Disciplinas cadastradas</h3>
+                <span id="total-materias">0 matérias</span>
+            </div>
+
+            <div id="lista-materias" class="lista-materias">
+                <p class="muted">
+                    Você ainda não cadastrou nenhuma matéria.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- CADERNO VIRTUAL -->
+        <section class="panel lower-panel" id="anotacoes">
+
+            <p class="eyebrow">SEU CADERNO</p>
+
+            <h2>Caderno virtual</h2>
+
+            <p class="muted">
+                Registre suas aulas e mantenha suas ideias organizadas.
+            </p>
+
+            <form id="form-anotacao" class="form-materia">
+
+                <div class="form-group">
+                    <label for="materia-anotacao">Matéria *</label>
+
+                    <select id="materia-anotacao" required>
+                        <option value="">Selecione uma matéria</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="titulo-anotacao">
+                        Título da anotação *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="titulo-anotacao"
+                        placeholder="Ex.: Introdução à programação"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="data-anotacao">Data da aula</label>
+
+                    <input type="date" id="data-anotacao">
+                </div>
+
+                <div class="form-group">
+                    <label for="texto-anotacao">
+                        Suas anotações *
+                    </label>
+
+                    <textarea
+                        id="texto-anotacao"
+                        rows="7"
+                        placeholder="Escreva aqui o que você aprendeu na aula..."
+                        required
+                    ></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="btn-salvar-anotacao"
+                >
+                    Salvar anotação
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-delete"
+                    id="btn-cancelar-edicao"
+                    hidden
+                >
+                    Cancelar edição
+                </button>
+
+            </form>
+
+            <div class="materias-heading">
+                <h3>Minhas anotações</h3>
+                <span id="total-anotacoes">0 anotações</span>
+            </div>
+
+            <div id="lista-anotacoes" class="lista-anotacoes">
+                <p class="muted">
+                    Suas anotações aparecerão aqui.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- HORÁRIOS DE ESTUDO -->
+        <section class="panel lower-panel" id="horarios">
+
+            <p class="eyebrow">PLANEJAMENTO</p>
+
+            <h2>Horários de estudo</h2>
+
+            <p class="muted">
+                Organize sua semana e reserve um tempinho para cada matéria.
+            </p>
+
+            <form id="form-horario" class="form-materia">
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="materia-horario">Matéria</label>
+
+                        <select id="materia-horario" required>
+                            <option value="">Escolha uma matéria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dia-horario">Dia da semana</label>
+
+                        <select id="dia-horario" required>
+                            <option value="">Escolha um dia</option>
+                            <option value="segunda">Segunda-feira</option>
+                            <option value="terca">Terça-feira</option>
+                            <option value="quarta">Quarta-feira</option>
+                            <option value="quinta">Quinta-feira</option>
+                            <option value="sexta">Sexta-feira</option>
+                            <option value="sabado">Sábado</option>
+                            <option value="domingo">Domingo</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="inicio-horario">
+                            Horário de início
+                        </label>
+
+                        <input
+                            id="inicio-horario"
+                            type="time"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fim-horario">
+                            Horário de término
+                        </label>
+
+                        <input
+                            id="fim-horario"
+                            type="time"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="objetivo-horario">
+                        O que você pretende estudar? (opcional)
+                    </label>
+
+                    <input
+                        id="objetivo-horario"
+                        type="text"
+                        placeholder="Ex.: Revisar anotações da aula"
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    + Adicionar horário
+                </button>
+
+            </form>
+
+            <div class="materias-heading">
+                <h3>Minha semana</h3>
+                <span id="total-horarios">0 horários</span>
+            </div>
+
+            <div id="lista-horarios" class="lista-horarios">
+                <p class="muted">
+                    Seus horários aparecerão aqui.
+                </p>
+            </div>
+
+        </section>
+
+        <footer>
+            PANDY STUDY © 2026 — ORGANIZE SEU FUTURO.
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="script.js"></script>
+    <script src="interface.js"></script>
+
+    <script>
+        // Encerrar sessão
+        document.getElementById("btn-logout").addEventListener(
+            "click",
+            async () => {
+
+                const botao = document.getElementById("btn-logout");
+
+                botao.disabled = true;
+                botao.textContent = "Saindo...";
+
+                try {
+                    const resposta = await fetch("/api/usuarios/logout", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+
+                    if (!resposta.ok) {
+                        throw new Error(
+                            "Não foi possível encerrar a sessão."
+                        );
+                    }
+
+                    window.location.replace("login.html");
+
+                } catch (erro) {
+                    console.error("Erro ao sair:", erro);
+
+                    alert(erro.message);
+
+                    botao.disabled = false;
+                    botao.textContent = "Sair da conta";
+                }
+            }
+        );
+    </script>
+
+</body>
+</html>

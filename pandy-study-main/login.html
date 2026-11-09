@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light" data-palette="blue">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#263B50">
+    <title>Pandy Study | Entrar</title>
+
+    <style>
+        :root {
+            --primary: #263B50;
+            --primary-hover: #1D2F41;
+            --accent: #A7B8C8;
+            --background: #F5F7FA;
+            --surface: #FFFFFF;
+            --surface-soft: #EEF2F6;
+            --text: #263442;
+            --muted: #718091;
+            --border: #E0E6EC;
+            --danger: #B65F67;
+        }
+
+        html[data-theme="dark"] {
+            --background: #151D27;
+            --surface: #202B38;
+            --surface-soft: #293746;
+            --text: #E9EEF4;
+            --muted: #A6B3C1;
+            --border: #354555;
+        }
+
+        html[data-palette="purple"] {
+            --primary: #66517F;
+            --primary-hover: #514064;
+            --accent: #B9A5D0;
+        }
+
+        html[data-theme="dark"][data-palette="purple"] {
+            --primary: #C3A9E2;
+            --primary-hover: #D5C2EC;
+            --accent: #9275B3;
+        }
+
+        html[data-palette="green"] {
+            --primary: #496B5A;
+            --primary-hover: #365343;
+            --accent: #A4C1AE;
+        }
+
+        html[data-theme="dark"][data-palette="green"] {
+            --primary: #A8CFB5;
+            --primary-hover: #C1DFCA;
+            --accent: #719B80;
+        }
+
+        html[data-palette="pink"] {
+            --primary: #986779;
+            --primary-hover: #7C5062;
+            --accent: #D8AFC0;
+        }
+
+        html[data-theme="dark"][data-palette="pink"] {
+            --primary: #E0B3C6;
+            --primary-hover: #EDC9D7;
+            --accent: #B9829A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background:
+                radial-gradient(circle at top left,
+                    color-mix(in srgb, var(--accent) 25%, transparent),
+                    transparent 38%),
+                var(--background);
+            color: var(--text);
+            transition: background .25s, color .25s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 430px;
+            padding: 38px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: 0 15px 45px rgba(20, 35, 50, .09);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo h1 {
+            color: var(--primary);
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo h1 span {
+            color: var(--accent);
+        }
+
+        .logo p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        h2 {
+            margin-bottom: 23px;
+            color: var(--text);
+            text-align: center;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .campo {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        input {
+            width: 100%;
+            min-height: 45px;
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        input::placeholder {
+            color: var(--muted);
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+        }
+
+        button {
+            width: 100%;
+            min-height: 45px;
+            margin-top: 8px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        html[data-theme="dark"] button {
+            color: #17212B;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .alternar {
+            margin-top: 23px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .alternar span {
+            color: var(--primary);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .alternar span:hover {
+            text-decoration: underline;
+        }
+
+        .mensagem {
+            min-height: 20px;
+            margin-top: 15px;
+            color: var(--danger);
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .voltar {
+            display: block;
+            margin-top: 20px;
+            color: var(--muted);
+            text-align: center;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .voltar:hover {
+            color: var(--primary);
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .personalizacao {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            margin-bottom: 22px;
+        }
+
+        .personalizacao select,
+        .personalizacao button {
+            width: auto;
+            min-height: 34px;
+            margin: 0;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .personalizacao button {
+            min-width: 36px;
+            font-size: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 22px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+
+    <script>
+        (() => {
+            const tema = localStorage.getItem("pandy-theme") || "light";
+            const paleta = localStorage.getItem("pandy-palette") || "blue";
+
+            document.documentElement.dataset.theme =
+                ["light", "dark"].includes(tema) ? tema : "light";
+
+            document.documentElement.dataset.palette =
+                ["blue", "purple", "green", "pink"].includes(paleta)
+                    ? paleta
+                    : "blue";
+        })();
+    </script>
+</head>
+
+<body>
+    <main class="container">
+
+        <div class="logo">
+            <h1>PANDY<span>STUDY.</span></h1>
+            <p>Seu espaço de organização e aprendizado.</p>
+        </div>
+
+        <div class="personalizacao">
+            <select id="palette-select" aria-label="Escolher cor">
+                <option value="blue">Azul</option>
+                <option value="purple">Roxo</option>
+                <option value="green">Verde</option>
+                <option value="pink">Rosa</option>
+            </select>
+
+            <button type="button" id="theme-toggle"
+                aria-label="Alternar tema" title="Alternar tema">☾</button>
+        </div>
+
+        <!-- LOGIN -->
+        <section id="tela-login">
+            <h2>Bem-vindo de volta!</h2>
+
+            <form id="form-login">
+                <div class="campo">
+                    <label for="email-login">E-mail</label>
+                    <input type="email" id="email-login"
+                        autocomplete="email" placeholder="seuemail@exemplo.com"
+                        required>
+                </div>
+
+                <div class="campo">
+                    <label for="senha-login">Senha</label>
+                    <input type="password" id="senha-login"
+                        autocomplete="current-password" placeholder="Digite sua senha"
+                        required>
+                </div>
+
+                <button type="submit" id="btn-login">Entrar na minha conta</button>
+            </form>
+
+            <p class="alternar">
+                Ainda não tem uma conta?
+                <span id="ir-cadastro">Cadastre-se</span>
+            </p>
+        </section>
+
+        <!-- CADASTRO -->
+        <section id="tela-cadastro" class="oculto">
+            <h2>Crie sua conta!</h2>
+
+            <form id="form-cadastro">
+                <div class="campo">
+                    <label for="nome-cadastro">Nome</label>
+                    <input type="text" id="nome-cadastro"
+                        autocomplete="name" placeholder="Seu nome completo"
+                        required>
+                </div>
+
+                <div class="campo">
+                    <label for="email-cadastro">E-mail</label>
+                    <input type="email" id="email-cadastro"
+                        autocomplete="email" placeholder="seuemail@exemplo.com"
+                        required>
+                </div>
+
+                <div class="campo">
+                    <label for="senha-cadastro">Senha</label>
+                    <input type="password" id="senha-cadastro"
+                        minlength="6" autocomplete="new-password"
+                        placeholder="Mínimo de 6 caracteres" required>
+                </div>
+
+                <div class="campo">
+                    <label for="confirmar-senha">Confirmar senha</label>
+                    <input type="password" id="confirmar-senha"
+                        minlength="6" autocomplete="new-password"
+                        placeholder="Digite a senha novamente" required>
+                </div>
+
+                <button type="submit" id="btn-cadastro">Criar minha conta</button>
+            </form>
+
+            <p class="alternar">
+                Já tem uma conta?
+                <span id="ir-login">Fazer login</span>
+            </p>
+        </section>
+
+        <p id="mensagem" class="mensagem" role="status" aria-live="polite"></p>
+
+        <a href="login.html" class="voltar">Pandy Study · Seu espaço acadêmico</a>
+    </main>
+
+    <script>
+        const API = "";
+
+        const telaLogin = document.getElementById("tela-login");
+        const telaCadastro = document.getElementById("tela-cadastro");
+        const mensagem = document.getElementById("mensagem");
+
+        const btnLogin = document.getElementById("btn-login");
+        const btnCadastro = document.getElementById("btn-cadastro");
+
+        // PERSONALIZAÇÃO
+        const seletorPaleta = document.getElementById("palette-select");
+        const botaoTema = document.getElementById("theme-toggle");
+        const root = document.documentElement;
+
+        seletorPaleta.value = root.dataset.palette;
+
+        function atualizarTemaBotao() {
+            const escuro = root.dataset.theme === "dark";
+            botaoTema.textContent = escuro ? "☀" : "☾";
+            botaoTema.title = escuro ? "Ativar tema claro" : "Ativar tema escuro";
+        }
+
+        atualizarTemaBotao();
+
+        seletorPaleta.addEventListener("change", () => {
+            root.dataset.palette = seletorPaleta.value;
+            localStorage.setItem("pandy-palette", seletorPaleta.value);
+        });
+
+        botaoTema.addEventListener("click", () => {
+            root.dataset.theme =
+                root.dataset.theme === "dark" ? "light" : "dark";
+
+            localStorage.setItem("pandy-theme", root.dataset.theme);
+            atualizarTemaBotao();
+        });
+
+        // ALTERNAR TELAS
+        document.getElementById("ir-cadastro").addEventListener("click", () => {
+            telaLogin.classList.add("oculto");
+            telaCadastro.classList.remove("oculto");
+            mensagem.textContent = "";
+        });
+
+        document.getElementById("ir-login").addEventListener("click", () => {
+            telaCadastro.classList.add("oculto");
+            telaLogin.classList.remove("oculto");
+            mensagem.textContent = "";
+        });
+
+        // LOGIN
+        document.getElementById("form-login").addEventListener("submit", async evento => {
+            evento.preventDefault();
+
+            const email = document.getElementById("email-login").value.trim();
+            const senha = document.getElementById("senha-login").value;
+
+            mensagem.textContent = "Verificando seus dados...";
+            btnLogin.disabled = true;
+
+            try {
+                const resposta = await fetch(`${API}/api/usuarios/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.mensagem || "Não foi possível entrar.");
+                }
+
+                mensagem.textContent = "Login realizado com sucesso!";
+                window.location.replace("index.html");
+
+            } catch (erro) {
+                console.error("Erro no login:", erro);
+                mensagem.textContent =
+                    erro.message || "Erro ao conectar com o servidor.";
+            } finally {
+                btnLogin.disabled = false;
+            }
+        });
+
+        // CADASTRO
+        document.getElementById("form-cadastro").addEventListener("submit", async evento => {
+            evento.preventDefault();
+
+            const nome = document.getElementById("nome-cadastro").value.trim();
+            const email = document.getElementById("email-cadastro").value.trim();
+            const senha = document.getElementById("senha-cadastro").value;
+            const confirmarSenha = document.getElementById("confirmar-senha").value;
+
+            if (senha !== confirmarSenha) {
+                mensagem.textContent = "As senhas não são iguais.";
+                return;
+            }
+
+            mensagem.textContent = "Criando sua conta...";
+            btnCadastro.disabled = true;
+
+            try {
+                const resposta = await fetch(`${API}/api/usuarios/cadastro`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.mensagem || "Não foi possível cadastrar.");
+                }
+
+                mensagem.textContent = "Conta criada! Agora faça seu login.";
+
+                document.getElementById("form-cadastro").reset();
+
+                telaCadastro.classList.add("oculto");
+                telaLogin.classList.remove("oculto");
+
+                document.getElementById("email-login").value = email;
+
+            } catch (erro) {
+                console.error("Erro no cadastro:", erro);
+                mensagem.textContent =
+                    erro.message || "Erro ao conectar com o servidor.";
+            } finally {
+                btnCadastro.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
